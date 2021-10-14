@@ -8,6 +8,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   Container,
   Form,
@@ -27,9 +29,21 @@ function Home() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
 
-  // useEffect(() => {
-  //   setTasks(Data);
-  // }, []);
+  useEffect(() => {
+    async function saveTasks() {
+      AsyncStorage.setItem('task', JSON.stringify(tasks));
+    }
+    saveTasks();
+  }, [tasks]);
+
+  useEffect(() => {
+    async function loadTasks() {
+      const task = await AsyncStorage.getItem('task');
+
+      task && setTasks(JSON.parse(tasks));
+    }
+    loadTasks();
+  }, [tasks]);
 
   async function createTask() {
     if (newTask === '') {
